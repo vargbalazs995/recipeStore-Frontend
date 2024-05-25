@@ -1,0 +1,30 @@
+<form [formGroup]="materialDetails">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <label for="name">Név</label>
+        <input id="matName" formControlName="matName" class="form-control" />
+        <label for="weight">Súly</label>
+        <input id="weight" formControlName="weight" class="form-control" />
+      </div>
+      <div class="col">
+        <label for="price">Ár</label>
+        <input id="price" formControlName="price" class="form-control" />
+        <label for="unit">Mértékegység</label>
+        <select class="form-control" id="unit" formControlName="unit">
+          <option>Kilogramm</option>
+          <option>Liter</option>
+          <option>Darab</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <hr />
+          <button class="btn btn-success" (click)="addMaterial()">Add</button>
+          <button class="btn btn-danger">Delete</button>
+          <button class="btn btn-primary">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-xs-12">
+    <button class="btn btn-success">New Recipe</button>
+  </div>
+</div>
+<hr />
+<div class="row">
+  <div class="col-xs-12">
+    <ng-container *ngIf="recipeList$ | async as recipeList">
+      <recipe-item
+        class="recipe-item"
+        *ngFor="let recipeItem of recipeList"
+        [recipe]="recipeItem"
+        (recipeSelected)="onSelectRecipe(recipeItem.id)"
+      >
+      </recipe-item>
+    </ng-container>
+  </div>
+</div>

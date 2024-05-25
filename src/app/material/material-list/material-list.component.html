@@ -1,0 +1,14 @@
+<ng-container *ngIf="operatedList$ | async as materialList">
+  <material-upload
+    [materialUpdate]="operationId$.getValue()"
+    (outputMaterial)="create($event)"
+  >
+  </material-upload>
+  <material-card
+    class="material-card"
+    *ngFor="let materialItem of materialList"
+    [material]="materialItem"
+    (updateMaterialEvent)="operationId$.next($event)"
+  >
+  </material-card>
+</ng-container>

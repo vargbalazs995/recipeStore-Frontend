@@ -1,0 +1,79 @@
+<form [formGroup]="recipeFormGroup" (ngSubmit)="onSubmit()">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <label for="name">Név</label>
+        <input id="name" formControlName="name" class="form-control" />
+        <label for="image">Súly</label>
+        <input id="image" formControlName="image" class="form-control" />
+        <label for="description">Írd le a receptet</label>
+        <textarea
+          class="form-control"
+          id="description"
+          rows="3"
+          formControlName="description"
+        ></textarea>
+        <ng-container *ngIf="materialList$ | async as materialList">
+          <!--  -->
+          <table class="" formArrayName="ingredients">
+            <tr>
+              <th colspan="2">Adj hozzá alapanyagokat</th>
+              <th width="150px">
+                <button
+                  type="button"
+                  (click)="addIngredient()"
+                  class="btn btn-success"
+                >
+                  Add More
+                </button>
+              </th>
+            </tr>
+            <tr
+              *ngFor="let quantity of ingredients().controls; let i = index"
+              [formGroupName]="i"
+            >
+              <td>
+                Alapanyag
+                <select class="form-control" formControlName="id">
+                  <option *ngFor="let item of materialList" [value]="item.id">
+                    {{ item.name }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                Mennyiség:
+                <input
+                  type="text"
+                  formControlName="weight"
+                  class="form-control"
+                />
+              </td>
+              <td>
+                Mértékegység:
+                <input
+                  type="text"
+                  formControlName="unit"
+                  class="form-control"
+                />
+              </td>
+              <td>
+                <button (click)="removeIngredient(i)" class="btn btn-danger">
+                  Removee
+                </button>
+              </td>
+            </tr>
+          </table>
+          <!--  -->
+        </ng-container>
+        <div class="row">
+          <div class="col-s-12">
+            <hr />
+            <button class="btn btn-success" (click)="addRecipe()">Add</button>
+            <button class="btn btn-danger">Delete</button>
+            <button class="btn btn-primary">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
