@@ -10,11 +10,12 @@ import {OperationEnum} from "../shared/models/operationEnum";
 export class MaterialService {
   operation$ = new BehaviorSubject<OperationEnum>(OperationEnum.READ);
   materialList$ =this.http.get<Material[]>('http://localhost:8080/api/material');
+  materialsSubject = new BehaviorSubject<Material[]>({} as Material[]);
+  materials$= this.materialsSubject.asObservable()
 
   constructor(private http: HttpClient) {}
 
   getMaterialList(): Observable<Material[]> {
-    console.log(this.materialList$)
     return merge(this.operation$).pipe(concatMap(()=>this.materialList$))
   }
 
@@ -23,11 +24,26 @@ export class MaterialService {
       return material}))
   }
 
+  // addMaterial(postMaterial: PostMaterial) {
+  //   return this.http.post<Material>(
+  //     'http://localhost:8080/api/material/upload',
+  //     postMaterial
+  //   ).pipe(map(material =>{this.operation$.next(OperationEnum.CREATE); return material}))
+  // }
+
+  loadMaterials(){
+    this.http.get<Material[]>('http://localhost:8080/api/material').subscribe(
+      materials => this.materialsSubject.next(materials)
+    );
+  }
+
   addMaterial(postMaterial: PostMaterial) {
     return this.http.post<Material>(
       'http://localhost:8080/api/material/upload',
-      postMaterial
-    ).pipe(map(material =>{this.operation$.next(OperationEnum.CREATE); return material}))
+      postMaterial).pipe(
+        map(material =>{this.loadMaterials();
+        return material;})
+    )
   }
 
   deleteMaterial(id: number) {

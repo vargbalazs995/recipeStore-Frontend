@@ -1,14 +1,15 @@
 <ng-container *ngIf="operatedList$ | async as materialList">
+  <ng-container *ngIf="operationMaterial$ | async as operationMaterial" >
   <material-upload
-    [materialUpdate]="operationId$.getValue()"
     (outputMaterial)="create($event)"
   >
   </material-upload>
+  </ng-container>
+
   <material-card
     class="material-card"
     *ngFor="let materialItem of materialList"
     [material]="materialItem"
-    (updateMaterialEvent)="operationId$.next($event)"
   >
   </material-card>
 </ng-container>

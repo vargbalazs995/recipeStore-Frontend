@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MaterialService} from '../material.service';
-import {Material} from '../material.model';
+import {Material, PostMaterial} from '../material.model';
 import {BehaviorSubject, combineLatestWith, map, Observable, of, startWith} from 'rxjs';
 import {OperationEnum} from "../../shared/models/operationEnum";
 
@@ -10,11 +10,11 @@ import {OperationEnum} from "../../shared/models/operationEnum";
   styleUrls: ['./material-list.component.css'],
 })
 export class MaterialListComponent implements OnInit {
-  materialList$ = new Observable<Material[]>();
+  materialList$ = this.materialService.materialList$
   operatedList$ : Observable<Material[]> =  new Observable<Material[]>();
   operationMaterial$ : Observable<Material> =  new Observable<Material>();
   operation$ : BehaviorSubject<OperationEnum> = new BehaviorSubject<OperationEnum>(OperationEnum.READ)
-  operationId$ = new BehaviorSubject<number>({} as number);
+
 
   constructor(private materialService: MaterialService) {}
 
@@ -22,26 +22,29 @@ export class MaterialListComponent implements OnInit {
     console.log(this.materialService.getMaterialList())
     //Nekem ezt kell triggerelni//
     this.operatedList$ = this.materialService.getMaterialList();
-    console.log(this.operatedList$);
+    console.log(this.operatedList$)
     this.operationMaterial$ = this.operationMaterial$.pipe(startWith({}as Material))
     console.log(this.operationMaterial$)
-    // this.operatedList$ = this.materialList$.pipe(
-    //   combineLatestWith( this.operationMaterial$, this.operation$), map(
-    //     ([materialList, operationMaterialList ,operation,]) =>  materialList
-    //   ) )
     this.operatedList$ = this.materialList$.pipe(
-      combineLatestWith(this.operationMaterial$, this.operation$),
-      map(([materialList,  operationMaterialList, operation]) => {
-        console.log('Combined data', materialList);
-        return materialList;
-      }))
-    console.log(this.operatedList$)
-    console.log(this.materialList$)
-
+      combineLatestWith( this.operationMaterial$, this.operation$), map(
+        ([materialList, operationMaterialList ,operation,]) => {
+          return materialList
+        }) )
   }
 
+  // create (material$: Observable<Material>) {
+  //   console.log(this.operationMaterial$)
+  //   this.operationMaterial$ = material$
+  //   this.operation$.next(OperationEnum.CREATE)
+  // }
+
   create (material$: Observable<Material>) {
-    this.operationMaterial$ = material$;
-    this.operation$.next(OperationEnum.CREATE)
+    material$.subscribe( (material: Material) => {
+      this.operationMaterial$ = new Observable<Material>(operationMaterial => {
+        operationMaterial.next(material)
+        operationMaterial.complete()
+      });
+      this.operation$.next(OperationEnum.CREATE);
+    })
   }
 }
